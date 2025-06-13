@@ -1,110 +1,244 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+  useWindowDimensions,
+} from "react-native";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+type MessageItem = {
+  id: string;
+  name: string;
+  avatar: string;
+  lastMessage: string;
+  time: string;
+  unreadCount?: number;
+};
 
-export default function TabTwoScreen() {
+const messages: MessageItem[] = [
+  {
+    id: "1",
+    name: "Guillber Mendez",
+    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
+    lastMessage: "Hola, ¿cómo vas con el proyecto de física?",
+    time: "10:45 AM",
+    unreadCount: 2,
+  },
+  {
+    id: "2",
+    name: "Ana Torres",
+    avatar: "https://randomuser.me/api/portraits/women/5.jpg",
+    lastMessage: "Ya subí el archivo del curso!",
+    time: "Ayer",
+    unreadCount: 0,
+  },
+];
+
+// Tarjeta individual de usuario
+const MessageCard = ({
+  item,
+  isSelected,
+  onPress,
+  textColor,
+  subTextColor,
+  cardColor,
+}: {
+  item: MessageItem;
+  isSelected: boolean;
+  onPress: () => void;
+  textColor: string;
+  subTextColor: string;
+  cardColor: string;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 12,
+      backgroundColor: isSelected ? "#0a66c210" : cardColor,
+      borderBottomColor: subTextColor + "33",
+      borderBottomWidth: 1,
+    }}
+  >
+    <Image
+      source={{ uri: item.avatar }}
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        marginRight: 12,
+      }}
+    />
+    <View style={{ flex: 1 }}>
+      <Text style={{ fontWeight: "600", fontSize: 16, color: textColor }}>
+        {item.name}
+      </Text>
+      <Text
+        numberOfLines={1}
+        style={{ fontSize: 14, color: subTextColor, marginTop: 2 }}
+      >
+        {item.lastMessage}
+      </Text>
+    </View>
+    <View style={{ alignItems: "flex-end" }}>
+      <Text style={{ fontSize: 12, color: subTextColor, marginBottom: 4 }}>
+        {item.time}
+      </Text>
+      {item.unreadCount ? (
+        <View
+          style={{
+            backgroundColor: "#0a66c2",
+            borderRadius: 999,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>
+            {item.unreadCount}
+          </Text>
+        </View>
+      ) : null}
+    </View>
+  </TouchableOpacity>
+);
+
+// Chat detail
+const ChatPanel = ({
+  selectedUser,
+  textColor,
+  bgColor,
+  cardColor,
+}: {
+  selectedUser: MessageItem;
+  textColor: string;
+  bgColor: string;
+  cardColor: string;
+}) => {
+  const [input, setInput] = useState("");
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1, backgroundColor: cardColor }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          padding: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: "#ccc",
+        }}
+      >
+        <Image
+          source={{ uri: selectedUser.avatar }}
+          style={{ width: 36, height: 36, borderRadius: 18, marginRight: 10 }}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+        <Text style={{ color: textColor, fontSize: 18, fontWeight: "600" }}>
+          {selectedUser.name}
+        </Text>
+      </View>
+
+      <ScrollView style={{ flex: 1, padding: 12 }}>
+        {/* Ejemplo de mensaje */}
+        <Text style={{ color: textColor }}>👋 Hola, ¿cómo estás?</Text>
+      </ScrollView>
+
+      <View
+        style={{
+          flexDirection: "row",
+          padding: 8,
+          borderTopWidth: 1,
+          borderTopColor: "#ccc",
+          backgroundColor: bgColor,
+        }}
+      >
+        <TextInput
+          placeholder="Escribe un mensaje"
+          placeholderTextColor="#888"
+          value={input}
+          onChangeText={setInput}
+          style={{
+            flex: 1,
+            backgroundColor: cardColor,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            color: textColor,
+            borderRadius: 20,
+            marginRight: 8,
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            console.log("Enviar:", input);
+            setInput("");
+          }}
+          style={{
+            backgroundColor: "#0a66c2",
+            borderRadius: 20,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>Enviar</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default function MessagesScreen() {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
+  const textColor = isDarkMode ? "white" : "black";
+  const subTextColor = isDarkMode ? "#aaa" : "#555";
+  const bgColor = isDarkMode ? "#1b1f23" : "#f0f2f5";
+  const cardColor = isDarkMode ? "#24292f" : "white";
+  const { width } = useWindowDimensions();
+
+  const [selectedId, setSelectedId] = useState<string | null>(messages[0].id);
+
+  const selectedUser = messages.find((msg) => msg.id === selectedId)!;
+
+  return (
+    <View style={{ flexDirection: "row", flex: 1, backgroundColor: bgColor }}>
+      {/* Lista de mensajes */}
+      <View style={{ width: width > 600 ? 300 : width, backgroundColor: bgColor }}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <MessageCard
+              item={item}
+              isSelected={item.id === selectedId}
+              onPress={() => setSelectedId(item.id)}
+              textColor={textColor}
+              subTextColor={subTextColor}
+              cardColor={cardColor}
+            />
+          )}
+        />
+      </View>
+
+      {/* Panel de chat solo si pantalla ancha */}
+      {width > 600 && selectedUser && (
+        <View style={{ flex: 1, borderLeftWidth: 1, borderColor: "#ccc" }}>
+          <ChatPanel
+            selectedUser={selectedUser}
+            textColor={textColor}
+            bgColor={bgColor}
+            cardColor={cardColor}
+          />
+        </View>
+      )}
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
