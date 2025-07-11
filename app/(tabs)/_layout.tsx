@@ -1,3 +1,4 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -31,6 +32,13 @@ export default function TabLayout() {
         options={{
           title: 'Inicio',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="class"
+        options={{
+          title: 'Clases Programadas',
+          tabBarIcon: ({ color }) => <AntDesign name="calendar" size={28} color={color} />,
         }}
       />
       <Tabs.Screen

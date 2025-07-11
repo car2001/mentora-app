@@ -11,6 +11,7 @@ import {
   Platform,
   Pressable,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -84,19 +85,63 @@ const posts = [
 
 const LeftSidebar = () => (
   <View style={{ padding: 8 }}>
-    <Text className="text-lg font-semibold mb-4">Sugerencias</Text>
-    <Text>Usuario A</Text>
-    <Text>Usuario B</Text>
+    <Text className="text-lg font-semibold mb-4 text-white">Accesos rápidos</Text>
+    <Text style={{ marginBottom: 6, color: "#3b82f6" }}>📘 Mis cursos</Text>
+    <Text style={{ marginBottom: 6, color: "#3b82f6" }}>📝 Mis publicaciones</Text>
+    <Text style={{ marginBottom: 6, color: "#3b82f6" }}>➕ Nueva publicación</Text>
+    <Text style={{ marginBottom: 6, color: "#3b82f6" }}>📅 Clases programadas</Text>
   </View>
 );
 
-const RightSidebar = () => (
-  <View style={{ padding: 8 }}>
-    <Text className="text-lg font-semibold mb-4 text-white">Tendencias</Text>
-    <Text style={{ color: "#06b6d4" }}>#ReactNative</Text>
-    <Text style={{ color: "#06b6d4" }}>#MentoraRed</Text>
-  </View>
-);
+const RightSidebar = () => {
+  const anuncios = [
+    {
+      id: "a1",
+      titulo: "Clases de Matemática",
+      descripcion: "Refuerza tus conocimientos con clases personalizadas online.",
+    },
+    {
+      id: "a2",
+      titulo: "Curso de Física Preuniversitaria",
+      descripcion: "Incluye simulacros, teoría y problemas resueltos.",
+    },
+    {
+      id: "a3",
+      titulo: "Taller de Escritura Académica",
+      descripcion: "Aprende a redactar ensayos, informes y más con técnicas profesionales.",
+    },
+  ];
+
+  return (
+    <ScrollView style={{ padding: 8 }} showsHorizontalScrollIndicator={false}>
+      <Text className="text-lg font-semibold mb-4 text-white">Anuncios</Text>
+
+      {anuncios.map((anuncio) => (
+        <View
+          key={anuncio.id}
+          style={{
+            backgroundColor: "#2d2d2d",
+            borderRadius: 10,
+            padding: 12,
+            marginBottom: 12,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 15, marginBottom: 6 }}>
+            {anuncio.titulo}
+          </Text>
+          <Text style={{ color: "#ccc", fontSize: 13, marginBottom: 10 }}>
+            {anuncio.descripcion}
+          </Text>
+          <TouchableOpacity style={{ alignSelf: "flex-start", backgroundColor: "#06b6d4", borderRadius: 6 }}>
+            <Text style={{ color: "white", fontSize: 13, paddingVertical: 4, paddingHorizontal: 10 }}>
+              Ver más
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
